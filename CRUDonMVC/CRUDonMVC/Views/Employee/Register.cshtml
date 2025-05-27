@@ -1,0 +1,34 @@
+﻿@model CRUDonMVC.Models.RegisterModel
+@using (Html.BeginForm())
+{
+    <div>
+        @Html.LabelFor(model => model.Username)
+        @Html.TextBoxFor(model => model.Username)
+        @Html.ValidationMessageFor(model => model.Username)
+    </div>
+    <div>
+        @Html.LabelFor(model => model.Password)
+        @Html.PasswordFor(model => model.Password)
+        @Html.ValidationMessageFor(model => model.Password)
+    </div>
+    <div>
+        @Html.LabelFor(model => model.Gender)
+        @Html.RadioButtonFor(model => model.Gender, "Male") Male
+        @Html.RadioButtonFor(model => model.Gender, "FeMale") FeMale
+        @Html.ValidationMessageFor(model => model.Gender)
+    </div>
+    <div>
+        @Html.LabelFor(model => model.Email)
+        @Html.TextBoxFor(model => model.Email)
+        @Html.ValidationMessageFor(model => model.Email)
+    </div>
+    <div>
+        @Html.LabelFor(model => model.Phone)
+        @Html.TextBoxFor(model => model.Phone)
+        @Html.ValidationMessageFor(model => model.Phone)
+    </div>
+    <div>
+        <input type="submit" value="Register" /> <span style="color:green">@ViewBag.message</span>
+        <p>Already Registered then click  <a href="@Url.Action("LoginCheck","Employee")">login</a></p>
+    </div>
+}

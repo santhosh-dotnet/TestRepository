@@ -1,0 +1,50 @@
+﻿@model IEnumerable<CRUDonMVC.Models.EmpModel>
+
+@{
+    ViewBag.Title = "Employees Daetails";
+}
+
+<h3>Employees Details</h3>
+
+<p>
+   <a href="@Url.Action("InsertEmp", "Employee")"> AddEmployee</a> 
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Eid)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Ename)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.City)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Address)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Eid)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Ename)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.City)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Address)
+        </td>
+        <td>
+           <a href="@Url.Action("UpdateEmp", "Employee", new { id=item.Eid})"> Update</a> |
+           <a href="@Url.Action("DeleteEmp", "Employee", new { id=item.Eid })"> Delete</a> 
+        </td>
+    </tr>
+}
+
+</table>

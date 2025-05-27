@@ -1,0 +1,19 @@
+﻿@model CRUDonMVC.Models.LoginModel
+    @using (Html.BeginForm())
+            {
+<div>
+    @Html.LabelFor(model => model.Username)
+    @Html.TextBoxFor(model => model.Username)
+    @Html.ValidationMessageFor(model => model.Username)
+</div>
+<div>
+    @Html.LabelFor(model => model.Password)
+    @Html.PasswordFor(model => model.Password)
+    @Html.ValidationMessageFor(model => model.Password)
+</div>
+<div>
+    <input type="submit" value="login" /> 
+    <p>Don't have an account? <a href="@Url.Action("Register","Employee")">Register Here</a>.</p>
+</div>
+<span>@ViewBag.message</span>
+            }

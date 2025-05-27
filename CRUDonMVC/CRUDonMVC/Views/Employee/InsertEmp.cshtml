@@ -1,0 +1,30 @@
+﻿@model CRUDonMVC.Models.EmpModel
+@using (Html.BeginForm())
+{
+    <div>
+        @Html.LabelFor(model => model.Eid)
+        @Html.TextBoxFor(model => model.Eid)
+        @Html.ValidationMessageFor(model => model.Eid)
+    </div>
+    <div>
+        @Html.LabelFor(model => model.Ename)
+        @Html.TextBoxFor(model => model.Ename)
+        @Html.ValidationMessageFor(model => model.Ename)
+    </div>
+    <div>
+        @Html.LabelFor(model => model.City)
+        @Html.TextBoxFor(model => model.City)
+        @Html.ValidationMessageFor(model => model.City)
+    </div>
+    <div>
+        @Html.LabelFor(model => model.Address)
+        @Html.TextBoxFor(model => model.Address)
+        @Html.ValidationMessageFor(model => model.Address)
+    </div>
+    <div>
+        <input type="submit" value="Insert" />
+        
+    </div>
+}
+
+
