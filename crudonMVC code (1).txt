@@ -302,13 +302,5 @@ namespace crudonMVC.Controllers
         }   
     }
 }
-Create Views
-***************
-1. Create View For EditEmp
-2. Create View For GetAllEmpdetails
-3. Create View For InsertEmp
-4. Create View For LoginCheck
-5. Create View For Register
 
-Run Program.
 """"""""""""""""""
