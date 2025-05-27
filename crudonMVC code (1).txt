@@ -1,0 +1,314 @@
+Create DataBase And Tables And Stored Procedures
+"*"*"*"*"*"**"*"*"*"*"**"*""*"*"*"*"*"**"*"*"*"*"
+create database MVC
+use mvc
+create table Employee(id int,ename varchar(30),city varchar(30),Address varchar(50))
+select*from employee
+
+create procedure employee_insert(@id int,@ename varchar(30),@city varchar(30),@address varchar(50))
+as begin
+insert into employee values(@id,@ename,@city,@address)
+end;
+
+create procedure employee_update(@id int,@ename varchar(30),@city varchar(30),@address varchar(50))
+as begin
+update employee set ename=@ename,city=@city,Address=@address where id=@id
+end;
+
+create procedure employee_delete(@id int)
+as begin
+delete from employee where id=@id
+end;
+
+create procedure employee_display
+as begin
+select*from employee
+end;
+
+create table Users(username varchar(50),password varchar(50),gender varchar(50),email varchar(50),phone bigint)
+select*from users
+
+create procedure user_login(@username varchar(50),@password varchar(50))
+as begin
+select count(*)from Users where username=@username and password=@password
+end;
+
+create procedure register_user(@username varchar(30),@password varchar(30),@gender varchar(30),@email varchar(30),@phone bigint)
+as begin
+insert into Users values(@username,@password,@gender,@email,@phone)
+end;
+
+Web.Config
+***********
+<connectionStrings>
+	<add name="cs" connectionString="Integrated security=yes;database=mvc;data source=LAPTOP-J081STFN\SQLEXPRESS"/>
+</connectionStrings>
+
+Create LogInModel
+**********************
+using System.ComponentModel.DataAnnotations;
+
+namespace crudonMVC.Models
+{
+    public class LoginModel
+    {
+        [Required(ErrorMessage ="User Name is Required")]
+        public string username { get; set; }
+
+        [Required(ErrorMessage ="Password is Required")]
+        public string password { get; set; }
+    }
+    public class RegisterModel
+    {
+        [Required(ErrorMessage = "User Name is Required")]
+        public string Username { get; set; }
+
+        [Required(ErrorMessage = "Password is Required")]
+        public string Password { get; set; }
+
+        [Required(ErrorMessage = "Select Your Gender")]
+        public string Gender { get; set; }
+
+        [Required(ErrorMessage = "Please Enter Your email")]
+        public string Email { get; set; }
+
+        [Required(ErrorMessage = "Please Enter Your Phone")]
+        public string Phone { get; set; }
+    }
+}
+Create EmpModel
+*********************
+using System.ComponentModel.DataAnnotations;
+
+namespace crudonMVC.Models
+{
+    public class EmpModel
+    {
+        [Display(Name ="id")]
+        public int Empid { get; set; }
+
+        [Required(ErrorMessage ="Please Enter employee Name ")]
+        public string EmpName { get; set; }
+
+        [Required(ErrorMessage ="Please Enter Your City")]
+        public string City { get; set; }
+
+        [Required(ErrorMessage ="Please Enter Your Address")]
+        public string Address { get; set; }
+    }
+}
+Create LoginRepository
+***************************
+using System.Data.SqlClient;
+using System.Data;
+using System.Configuration;
+
+namespace crudonMVC.Models
+{
+    public class LoginRepository
+    {
+        string constr = ConfigurationManager.ConnectionStrings["cs"].ToString();
+        public void Checkuser(LoginModel obj)
+        {
+            
+            SqlConnection con = new SqlConnection(constr);
+            con.Open();
+            SqlCommand cmd = new SqlCommand("user_login", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@username", obj.username);
+            cmd.Parameters.AddWithValue("@password", obj.password);
+            cmd.ExecuteNonQuery();
+            con.Close();
+            
+        }
+        public void RegisterUser(RegisterModel obj)
+        {
+            SqlConnection con = new SqlConnection(constr);
+            SqlCommand cmd = new SqlCommand("register_user", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@username", obj.Username);
+            cmd.Parameters.AddWithValue("@password", obj.Password);
+            cmd.Parameters.AddWithValue("@gender", obj.Gender);
+            cmd.Parameters.AddWithValue("@email", obj.Email);
+            cmd.Parameters.AddWithValue("@phone", obj.Phone);
+            con.Open();
+            cmd.ExecuteNonQuery();
+            con.Close();
+        }
+    }
+}
+Create EmpRepository
+**************************
+using System.Data.SqlClient;
+using System.Data;
+using System.Configuration;
+
+namespace crudonMVC.Models
+{
+    public class EmpRepository
+    {
+        string constr = ConfigurationManager.ConnectionStrings["cs"].ToString();
+        public void InsertEmployee(EmpModel obj)
+        {
+            SqlConnection con = new SqlConnection(constr);
+            SqlCommand cmd = new SqlCommand("employee_insert", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@id", obj.Empid);
+            cmd.Parameters.AddWithValue("@ename", obj.EmpName);
+            cmd.Parameters.AddWithValue("@city", obj.City);
+            cmd.Parameters.AddWithValue("@address", obj.Address);
+            con.Open();
+            cmd.ExecuteNonQuery();
+            con.Close();
+        }
+        public List<EmpModel> GetAllEmployees()
+        {
+            SqlConnection con = new SqlConnection(constr);
+            List<EmpModel> obj = new List<EmpModel>();
+            SqlCommand cmd = new SqlCommand("employee_display", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            DataTable dt = new DataTable();
+            con.Open();
+            da.Fill(dt);
+            con.Close();
+            foreach (DataRow dr in dt.Rows)
+            {
+                obj.Add(new EmpModel()
+                {
+                    Empid=Convert.ToInt32(dr["id"]),
+                    EmpName=Convert.ToString(dr["ename"]),
+                    City=Convert.ToString(dr["city"]),
+                    Address=Convert.ToString(dr["address"])
+                });
+            }
+            return obj;
+        }
+        public void UpdateEmployee(EmpModel obj)
+        {
+            SqlConnection con = new SqlConnection(constr);
+            SqlCommand cmd = new SqlCommand("employee_update", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@id", obj.Empid);
+            cmd.Parameters.AddWithValue("@ename", obj.EmpName);
+            cmd.Parameters.AddWithValue("@city", obj.City);
+            cmd.Parameters.AddWithValue("@address", obj.Address);
+            con.Open();
+            cmd.ExecuteNonQuery();
+            con.Close();
+        }
+        public void DeleteEmployee(int id)
+        {
+            SqlConnection con = new SqlConnection(constr);
+            SqlCommand cmd = new SqlCommand("employee_delete", con);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@id", id);
+            con.Open();
+            cmd.ExecuteNonQuery();
+            con.Close();
+        }
+    }
+}
+Create EmployeeController
+*******************************
+using crudonMVC.Models;
+
+namespace crudonMVC.Controllers
+{
+    public class EmployeeController : Controller
+    {
+        // GET: Employee
+        public ActionResult Register()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult Register(RegisterModel reg)
+        {
+            if (ModelState.IsValid)
+            {
+                LoginRepository lr = new LoginRepository();
+                lr.RegisterUser(reg);
+                return RedirectToAction("LoginCheck");
+            }
+            else
+                return View();
+        }
+        public ActionResult LoginCheck()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult LoginCheck(LoginModel reg)
+        {
+            if (ModelState.IsValid)
+            {
+                LoginRepository lr = new LoginRepository();
+                lr.Checkuser(reg);
+                return RedirectToAction("GetAllEmpDetails");
+            }
+            else
+            {
+                ViewBag.Message = "invalid username or password";
+                return View();
+            }
+        }
+        public ActionResult InsertEmployee()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult InsertEmployee(EmpModel emp)
+        {
+            if(ModelState.IsValid)
+            {
+                EmpRepository er = new EmpRepository();
+                er.InsertEmployee(emp);
+                return RedirectToAction("GetAllEmpDetails");
+            }
+            return View();
+        }
+        public ActionResult GetAllEmpDetails()
+        {
+            EmpRepository er = new EmpRepository();
+           // ModelState.Clear();
+            return View(er.GetAllEmployees());
+        }
+        public ActionResult EditEmp(int id)
+        {
+            EmpRepository er = new EmpRepository();
+            return View(er.GetAllEmployees().Find(emp => emp.Empid == id));
+        }
+        [HttpPost]
+        public ActionResult EditEmp( EmpModel emp)
+        {
+            if (ModelState.IsValid)
+            {
+                EmpRepository er = new EmpRepository();
+                er.UpdateEmployee(emp);
+                return RedirectToAction("GetAllEmpDetails");
+            }
+            return View();
+        }
+        public ActionResult DeleteEmp(int id)
+        {
+            if (ModelState.IsValid)
+            {
+                EmpRepository er = new EmpRepository();
+                er.DeleteEmployee(id);
+                return RedirectToAction("GetAllEmpDetails");
+            }
+            return View();
+        }   
+    }
+}
+Create Views
+***************
+1. Create View For EditEmp
+2. Create View For GetAllEmpdetails
+3. Create View For InsertEmp
+4. Create View For LoginCheck
+5. Create View For Register
+
+Run Program.
+""""""""""""""""""
